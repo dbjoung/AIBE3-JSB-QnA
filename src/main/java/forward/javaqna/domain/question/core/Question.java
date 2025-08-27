@@ -1,12 +1,14 @@
 package forward.javaqna.domain.question.core;
 
+import forward.javaqna.domain.answer.core.Answer;
+import forward.javaqna.domain.member.core.Member;
 import forward.javaqna.global.jpa.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -24,8 +26,20 @@ public class Question extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    public Question (String title, String content) {
-        this.title = title;
-        this.content = content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @OneToMany(mappedBy = "question", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Answer> answerList = new ArrayList<>();
+
+    public Answer addAnswer(String content) {
+        Answer answer = new Answer();
+        answer.setContent(content);
+        answer.setQuestion(this);
+        answer.setMember(member);
+        answerList.add(answer);
+
+        return answer;
     }
 }

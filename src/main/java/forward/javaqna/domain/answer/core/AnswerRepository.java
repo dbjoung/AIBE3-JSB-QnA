@@ -1,4 +1,6 @@
 package forward.javaqna.domain.answer.core;
 
-public interface AnswerRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AnswerRepository extends JpaRepository<Answer, Integer> {
 }
