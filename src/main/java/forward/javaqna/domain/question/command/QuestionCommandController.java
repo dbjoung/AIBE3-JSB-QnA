@@ -1,11 +1,13 @@
 package forward.javaqna.domain.question.command;
 
+import forward.javaqna.domain.question.command.dto.QuestionModifyDto;
 import forward.javaqna.domain.question.command.dto.QuestionWriteDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -35,5 +37,31 @@ public class QuestionCommandController {
         Integer id = questionCommandService.writeQuestion(questionWriteDto);
 
         return "redirect:/question/find/" + id;
+    }
+
+    /**
+     * 질문 수정 뷰
+     */
+    @GetMapping("/modify/{id}")
+    public String editForm(@PathVariable("id") Integer questionId, Model model) {
+        QuestionModifyDto editDto = questionCommandService.findByIdForModify(questionId);
+
+        model.addAttribute("question", editDto);
+        model.addAttribute("isModify", true);
+
+        return "question/write";
+    }
+
+    /**
+     * 질문 수정 POST 처리
+     * @param questionId 수정 대상 ID
+     * @return 상세페이지로 리다이렉트
+     */
+    //TODO: Validation 적용, 질문 등록자만 수정 가능
+    @PostMapping("/modify/{id}")
+    public String editQuestion(@PathVariable("id") Integer questionId, @ModelAttribute QuestionModifyDto questionEditDto) {
+        questionCommandService.modify(questionEditDto);
+
+        return "redirect:/question/find/" + questionId;
     }
 }
