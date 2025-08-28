@@ -1,6 +1,7 @@
 package forward.javaqna.domain.question.query;
 
 import forward.javaqna.domain.question.core.QuestionRepository;
+import forward.javaqna.domain.question.query.DTO.QuestionDTO;
 import forward.javaqna.domain.question.query.DTO.QuestionListDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,10 @@ public class QuestionQueryService {
 
     public List<QuestionListDTO> getQuestionList() {
         return QuestionListDTO.fromEntity(questionRepository.findAll());
+    }
+
+    public QuestionDTO getQuestionById(int id) {
+        return QuestionDTO.fromQuestion(questionRepository.findById(id).get());
     }
 
 }
