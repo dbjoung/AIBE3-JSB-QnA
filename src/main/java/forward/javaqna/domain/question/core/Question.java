@@ -42,4 +42,10 @@ public class Question extends BaseEntity {
 
         return answer;
     }
+
+    public Question(String title, String content, Member member) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+    }
 }
