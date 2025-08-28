@@ -64,4 +64,17 @@ public class QuestionCommandController {
 
         return "redirect:/question/find/" + questionId;
     }
+
+    /**
+     * 질문 삭제 POST 처리
+     * @param questionId 삭제 대상 ID
+     * @return 질문 리스트 페이지로 리다이렉트
+     */
+    //TODO: 질문 등록자만 삭제 가능
+    @PostMapping("/delete/{id}")
+    public String deleteQuestion(@PathVariable("id") Integer questionId) {
+        questionCommandService.delete(questionId);
+
+        return "redirect:/question/list";
+    }
 }

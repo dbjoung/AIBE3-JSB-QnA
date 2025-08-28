@@ -3,4 +3,6 @@ package forward.javaqna.domain.answer.core;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AnswerRepository extends JpaRepository<Answer, Integer> {
+
+    void deleteByQuestion_Id(Integer questionId);
 }

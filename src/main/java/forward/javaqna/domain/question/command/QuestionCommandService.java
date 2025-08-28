@@ -1,5 +1,6 @@
 package forward.javaqna.domain.question.command;
 
+import forward.javaqna.domain.answer.core.AnswerRepository;
 import forward.javaqna.domain.question.command.dto.QuestionModifyDto;
 import forward.javaqna.domain.question.command.dto.QuestionWriteDto;
 import forward.javaqna.domain.question.core.Question;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class QuestionCommandService {
 
     private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
     @Transactional
     public Integer writeQuestion(QuestionWriteDto questionWriteDto) {
@@ -35,5 +37,12 @@ public class QuestionCommandService {
 
         Question question = questionRepository.getQuestionById(id);
         question.edit(newTitle, newContent);
+    }
+
+    @Transactional
+    public void delete(Integer questionId) {
+        //TODO: Answer 엔티티 양방향 관계 논의 필요?
+        answerRepository.deleteByQuestion_Id(questionId);
+        questionRepository.deleteById(questionId);
     }
 }
