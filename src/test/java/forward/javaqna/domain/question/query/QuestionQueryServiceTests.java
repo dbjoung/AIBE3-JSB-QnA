@@ -3,6 +3,7 @@ package forward.javaqna.domain.question.query;
 import forward.javaqna.domain.member.core.Member;
 import forward.javaqna.domain.question.core.Question;
 import forward.javaqna.domain.question.core.QuestionRepository;
+import forward.javaqna.domain.question.query.DTO.QuestionDTO;
 import forward.javaqna.domain.question.query.DTO.QuestionListDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,12 +29,12 @@ public class QuestionQueryServiceTests {
     public void setup() { //Question 엔티티에 @Setter 어노테이션 추가 후 테스트
         questionRepository.deleteAll();
         Question question = new Question();
-//        question.setTitle("Test Question 1");
-//        question.setContent("Test Question 1");
+        question.setTitle("Test Question 1");
+        question.setContent("Test Question 1");
         questionRepository.save(question);
         Question question1 = new Question();
-//        question1.setTitle("Test Question 2");
-//        question1.setContent("Test Question 2");
+        question1.setTitle("Test Question 2");
+        question1.setContent("Test Question 2");
         questionRepository.save(question1);
     }
 
@@ -47,5 +48,12 @@ public class QuestionQueryServiceTests {
         }
 
         assertThat(questionList).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("질문 상세 조회")
+    void t2() {
+        QuestionDTO questionDTO = questionQueryService.getQuestionById(1);
+        assertThat(questionDTO.getTitle()).isEqualTo("Test Question 1");
     }
 }
