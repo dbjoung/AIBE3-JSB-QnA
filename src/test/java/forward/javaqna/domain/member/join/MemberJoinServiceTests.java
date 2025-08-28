@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class MemberJoinService {
+public class MemberJoinServiceTests {
     @Autowired
     private MemberJoinService memberJoinService;
 
