@@ -1,5 +1,6 @@
 package forward.javaqna.domain.question.command;
 
+import forward.javaqna.domain.answer.core.Answer;
 import forward.javaqna.domain.question.command.dto.QuestionModifyDto;
 import forward.javaqna.domain.question.command.dto.QuestionWriteDto;
 import forward.javaqna.domain.question.core.Question;
@@ -76,5 +77,36 @@ class QuestionCommandServiceTest {
         assertThat(question).isNotNull();
         assertThat(question.getTitle()).isEqualTo(modifyDto.title());
         assertThat(question.getContent()).isEqualTo(modifyDto.content());
+    }
+
+    @Test
+    @DisplayName("질문 삭제 시 관련된 답변들도 삭제된다.")
+    void delete() {
+        //given
+        Question savedQuestion = questionRepository.save(new Question("title", "content", null));
+
+        Answer a1 = new Answer();
+        a1.setQuestion(savedQuestion);
+        a1.setContent("answer1");
+        em.persist(a1);
+
+        Answer a2 = new Answer();
+        a2.setQuestion(savedQuestion);
+        a2.setContent("answer1");
+        em.persist(a2);
+
+        //when
+        questionCommandService.delete(savedQuestion.getId());
+        em.flush();
+        em.clear();
+
+        //then
+        Question question = questionRepository.findById(savedQuestion.getId()).orElse(null);
+        Answer deletedA1 = em.find(Answer.class, a1.getId());
+        Answer deletedA2 = em.find(Answer.class, a2.getId());
+
+        assertThat(question).isNull();
+        assertThat(deletedA1).isNull();
+        assertThat(deletedA2).isNull();
     }
 }
