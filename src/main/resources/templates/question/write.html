@@ -1,0 +1,61 @@
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>질문 등록</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- EasyMDE CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<div class="container mx-auto my-6 p-6 bg-white rounded shadow-md">
+    <h5 class="text-2xl font-bold mb-6 border-b pb-2"
+        th:text="${isModify} ? '질문 수정' : '질문 등록'">질문 등록</h5>
+
+    <form th:action="${isModify} ? @{/question/modify/{id}(id=${question.id})} : @{/question/write}"
+          th:object="${question}"
+          method="post" class="space-y-4">
+
+        <!-- 제목 -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">제목</label>
+            <input type="text" th:field="*{title}" placeholder="제목을 입력하세요"
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="text-red-500 text-sm mt-1" th:errors="*{title}"></div>
+        </div>
+
+        <!-- 내용 (EasyMDE 에디터 적용) -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">내용</label>
+            <textarea th:field="*{content}" id="content" rows="10"
+                      placeholder="마크다운 형식으로 내용을 입력하세요"></textarea>
+            <div class="text-red-500 text-sm mt-1" th:errors="*{content}"></div>
+        </div>
+
+        <!-- 버튼 -->
+        <div>
+            <input type="submit"
+                   th:value="${isModify} ? '수정하기' : '저장하기'"
+                   class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition cursor-pointer">
+        </div>
+    </form>
+</div>
+
+<!-- EasyMDE JS -->
+<script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+<script>
+    new EasyMDE({
+        element: document.getElementById("content"),
+        spellChecker: false,   // 맞춤법 검사 비활성화
+        minHeight: "300px",
+        autofocus: true,
+        placeholder: "마크다운으로 작성할 수 있습니다...",
+        status: false
+    });
+</script>
+
+</body>
+</html>

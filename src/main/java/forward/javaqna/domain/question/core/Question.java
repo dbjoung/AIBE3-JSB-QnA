@@ -42,4 +42,15 @@ public class Question extends BaseEntity {
 
         return answer;
     }
+
+    public Question(String title, String content, Member member) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+    }
+
+    public void edit(String newTitle, String newContent) {
+        this.title = newTitle;
+        this.content = newContent;
+    }
 }
