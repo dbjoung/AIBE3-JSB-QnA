@@ -11,6 +11,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class Answer extends BaseEntity {
