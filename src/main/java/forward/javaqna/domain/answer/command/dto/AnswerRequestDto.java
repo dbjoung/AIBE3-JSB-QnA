@@ -6,10 +6,9 @@ import forward.javaqna.domain.question.core.Question;
 import lombok.Data;
 
 @Data
-public class AnswerCreateRequest {
+public class AnswerRequestDto {
 
     private String content;
-    private int questionId;
 
     public Answer toEntity(Member member, Question question) {
         return question.addAnswer(content, member);

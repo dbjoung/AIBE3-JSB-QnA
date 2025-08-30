@@ -11,6 +11,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class Answer extends BaseEntity {
@@ -29,4 +30,8 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void edit(String newContent) {
+        this.content = newContent;
+    }
 }
