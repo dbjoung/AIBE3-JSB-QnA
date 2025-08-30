@@ -112,4 +112,51 @@ class AnswerCommandServiceTest {
                 () -> answerCommandService.modifyAnswer(member2.getUsername(), answerId, modifyRequest)
         );
     }
+
+    @Test
+    @DisplayName("작성자가 답변 삭제 성공 테스트")
+    void t4() {
+        // given
+        AnswerRequestDto createRequest = new AnswerRequestDto();
+        createRequest.setContent("삭제할 답변");
+        Integer answerId = answerCommandService.createAnswer(member1.getUsername(), question1.getId(), createRequest);
+        em.flush();
+        em.clear();
+
+        // when
+        answerCommandService.deleteAnswer(member1.getUsername(), answerId);
+        em.flush();
+        em.clear();
+
+        // then
+        assertThat(answerRepository.findById(answerId)).isEmpty();
+        Question findQuestion = questionRepository.findById(question1.getId()).orElseThrow();
+        assertThat(findQuestion.getAnswerList()).doesNotContain(answerRepository.findById(answerId).orElse(null));
+    }
+
+    @Test
+    @DisplayName("작성자가 아닌 경우 답변 삭제 실패")
+    void t5() {
+        // given
+        AnswerRequestDto createRequest = new AnswerRequestDto();
+        createRequest.setContent("삭제할 답변");
+        Integer answerId = answerCommandService.createAnswer(member1.getUsername(), question1.getId(), createRequest);
+        em.flush();
+        em.clear();
+
+        Member member2 = new Member("user2", "pass2", "User Two");
+        em.persist(member2);
+        em.flush();
+        em.clear();
+
+        // then
+        assertThrows(
+                IllegalStateException.class,
+                () -> answerCommandService.deleteAnswer(member2.getUsername(), answerId)
+        );
+
+        // 삭제되지 않았는지 확인
+        Answer savedAnswer = answerRepository.findById(answerId).orElseThrow();
+        assertThat(savedAnswer).isNotNull();
+    }
 }
