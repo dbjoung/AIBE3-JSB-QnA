@@ -4,16 +4,15 @@ import forward.javaqna.domain.member.core.Member;
 import forward.javaqna.domain.question.core.Question;
 import forward.javaqna.global.jpa.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @NoArgsConstructor
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
 public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
