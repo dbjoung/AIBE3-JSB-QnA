@@ -34,10 +34,18 @@ public class AnswerCommandService {
     public void modifyAnswer(String username, Integer answerId, AnswerRequestDto answerRequestDto) {
         Member member = getMember(username);
         Answer answer = getAnswer(answerId);
-        if (answer.getMember() != member) throw new IllegalStateException("작성자가 아니므로 수정할 수 없습니다.");
+        validAnswerHasMember(answer, member);
 
         String newContent = answerRequestDto.getContent();
         answer.edit(newContent);
+    }
+
+    public void deleteAnswer(String username, Integer answerId) {
+        Member member = getMember(username);
+        Answer answer = getAnswer(answerId);
+        validAnswerHasMember(answer, member);
+
+        answerRepository.delete(answer);
     }
 
     private Question getQuestion(Integer questionId) {
@@ -53,5 +61,9 @@ public class AnswerCommandService {
     private Answer getAnswer(Integer answerId) {
         return answerRepository.findById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("답변이 존재하지 않습니다."));
+    }
+
+    private static void validAnswerHasMember(Answer answer, Member member) {
+        if (answer.getMember() != member) throw new IllegalStateException("작성자가 아니므로 수정/삭제 할 수 없습니다.");
     }
 }
