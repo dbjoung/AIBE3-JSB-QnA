@@ -14,24 +14,19 @@ public class QuestionListDTO {
     private String title;
     private MemberDTO member;
 
-    public static List<QuestionListDTO> fromEntity(List<Question> questionList) {
-        List<QuestionListDTO> questionListDTO = new ArrayList<>();
+    public static QuestionListDTO fromEntity(Question question) {
+        Member memberEntity = question.getMember();
+        MemberDTO member = null;
 
-        for(Question question : questionList) {
-            Member memberEntity = question.getMember();
-            MemberDTO member = null;
-
-            if (memberEntity != null) {
-                member = MemberDTO.fromMember(memberEntity);
-            }
-
-            QuestionListDTO questionDTO = new QuestionListDTO();
-            questionDTO.setId(question.getId());
-            questionDTO.setTitle(question.getTitle());
-            questionDTO.setMember(member);
-
-            questionListDTO.add(questionDTO);
+        if (memberEntity != null) {
+            member = MemberDTO.fromMember(memberEntity);
         }
-        return questionListDTO;
+
+        QuestionListDTO dto = new QuestionListDTO();
+        dto.setId(question.getId());
+        dto.setTitle(question.getTitle());
+        dto.setMember(member);
+
+        return dto;
     }
 }
