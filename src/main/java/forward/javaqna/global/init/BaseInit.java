@@ -15,7 +15,7 @@ public class BaseInit {
     @Bean
     public ApplicationRunner baseInitApplicationRunner() {
         return args -> {
-            memberRepository.save(new Member("forward", "1234", "dasol"));
+            //memberRepository.save(new Member("forward", "1234", "dasol"));
         };
     }
 }
