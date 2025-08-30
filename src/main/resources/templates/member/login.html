@@ -1,0 +1,10 @@
+<div style="color:red;" th:utext="${errorMessage}"></div>
+
+<form th:action="@{/user/auth/login}" method="post">
+    <input type="text" name="username" placeholder="아이디 또는 이메일" autofocus />
+    <br>
+    <input type="password" name="password" placeholder="비밀번호" />
+    <br>
+    <input type="submit" value="로그인" />
+    임시
+</form>
