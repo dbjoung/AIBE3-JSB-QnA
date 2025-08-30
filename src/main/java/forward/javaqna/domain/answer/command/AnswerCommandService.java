@@ -20,11 +20,11 @@ public class AnswerCommandService {
     private final MemberRepository memberRepository;
     private final QuestionRepository questionRepository;
 
-    public int createAnswer(String username, AnswerCreateRequest answerCreateRequest) {
+    public Integer createAnswer(String username, Integer questionId, AnswerCreateRequest answerCreateRequest) {
         Member member = memberRepository.findById(username)
                 .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
 
-        Question question = questionRepository.findById(answerCreateRequest.getQuestionId())
+        Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("질문 없음"));
 
         Answer answer = answerCreateRequest.toEntity(member, question);

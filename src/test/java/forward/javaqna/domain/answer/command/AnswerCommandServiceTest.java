@@ -47,10 +47,9 @@ class AnswerCommandServiceTest {
         // given
         AnswerCreateRequest request = new AnswerCreateRequest();
         request.setContent("테스트 답변입니다.");
-        request.setQuestionId(question1.getId());
 
         // when
-        int answerId = answerCommandService.createAnswer(member1.getUsername(), request);
+        Integer answerId = answerCommandService.createAnswer(member1.getUsername(), question1.getId(), request);
         em.flush();
         em.clear();
 

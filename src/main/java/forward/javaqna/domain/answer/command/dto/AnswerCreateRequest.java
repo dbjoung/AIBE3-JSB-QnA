@@ -9,7 +9,6 @@ import lombok.Data;
 public class AnswerCreateRequest {
 
     private String content;
-    private int questionId;
 
     public Answer toEntity(Member member, Question question) {
         return question.addAnswer(content, member);
