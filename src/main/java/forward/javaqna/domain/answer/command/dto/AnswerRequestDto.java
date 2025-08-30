@@ -6,7 +6,7 @@ import forward.javaqna.domain.question.core.Question;
 import lombok.Data;
 
 @Data
-public class AnswerCreateRequest {
+public class AnswerRequestDto {
 
     private String content;
 
