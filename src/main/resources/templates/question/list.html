@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Question List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-md p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Question List</h1>
+
+    <ul class="divide-y divide-gray-200">
+        <li th:each="question : ${questionList.content}" class="py-4">
+            <a th:href="@{'/question/find/' + ${question.id}}"
+               class="block hover:bg-gray-50 p-4 rounded-lg transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">ID:
+                            <span th:text="${question.id}"></span>
+                        </p>
+                        <h2 class="text-lg font-semibold text-gray-800" th:text="${question.title}"></h2>
+                    </div>
+                    <span class="text-blue-500 text-sm">View →</span>
+                </div>
+            </a>
+        </li>
+    </ul>
+    <!-- 페이지네이션 -->
+    <div class="flex justify-center items-center space-x-2 mt-8">
+
+        <!-- 첫번째 페이지 -->
+        <a th:href="@{/question/list(page=1)}"
+           class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100">
+            «
+        </a>
+
+        <!-- 이전 버튼 -->
+        <a th:href="${questionList.first} ? '#' : @{/question/list(page=${questionList.number})}"
+           class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100">
+            ‹ Prev
+        </a>
+
+        <!-- 페이지 번호 -->
+        <span th:each="page : ${#numbers.sequence(startPage, endPage)}">
+        <!-- 현재 페이지 -->
+        <span th:if="${page == questionList.number + 1}"
+              th:text="${page}"
+              class="px-3 py-1 rounded-lg border bg-blue-500 text-white"></span>
+
+            <!-- 다른 페이지 -->
+        <a th:unless="${page == questionList.number + 1}"
+           th:href="@{/question/list(page=${page})}"
+           th:text="${page}"
+           class="px-3 py-1 rounded-lg border bg-gray-100 text-gray-700 hover:bg-gray-200"></a>
+    </span>
+
+        <!-- 다음 버튼 -->
+        <a th:href="${questionList.last} ? '#' : @{/question/list(page=${questionList.number + 2})}"
+           class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100">
+            Next ›
+        </a>
+
+        <!-- 마지막 페이지 -->
+        <a th:href="@{/question/list(page=${questionList.totalPages})}"
+           class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100">
+            »
+        </a>
+    </div>
+
+    <div class="flex justify-end mt-6">
+        <a href="/question/write"
+           class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow">
+            New Question
+        </a>
+    </div>
+</div>
+</body>
+</html>
