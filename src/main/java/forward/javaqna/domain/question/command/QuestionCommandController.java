@@ -2,9 +2,11 @@ package forward.javaqna.domain.question.command;
 
 import forward.javaqna.domain.question.command.dto.QuestionModifyDto;
 import forward.javaqna.domain.question.command.dto.QuestionWriteDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,9 +33,13 @@ public class QuestionCommandController {
      * 질문 등록 POST 처리
      * @return 상세페이지로 리다이렉트
      */
-    //TODO: Validation 적용, 로그인된 사용자만 등록 가능
+    //TODO: 로그인된 사용자만 등록 가능
     @PostMapping("/write")
-    public String writeQuestion(@ModelAttribute("question") QuestionWriteDto questionWriteDto) {
+    public String writeQuestion(@Valid @ModelAttribute("question") QuestionWriteDto questionWriteDto,
+                                BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "question/write";
+        }
         Integer id = questionCommandService.writeQuestion(questionWriteDto);
 
         return "redirect:/question/find/" + id;
