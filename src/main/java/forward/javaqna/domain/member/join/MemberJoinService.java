@@ -4,14 +4,14 @@ import forward.javaqna.domain.member.core.Member;
 import forward.javaqna.domain.member.core.MemberRepository;
 import forward.javaqna.domain.member.join.dto.SignUpFormDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class MemberJoinService {
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     // 멤버 추가 함수
     public Member addMember(SignUpFormDTO signUpFormDTO) {
@@ -30,10 +30,10 @@ public class MemberJoinService {
     }
 
     public String encodePassword(String password) {
-        return bCryptPasswordEncoder.encode(password);
+        return passwordEncoder.encode(password);
     }
 
     public boolean checkPassword(String originalPassword, String encryptionPassword) {
-        return bCryptPasswordEncoder.matches(originalPassword, encryptionPassword);
+        return passwordEncoder.matches(originalPassword, encryptionPassword);
     }
 }
