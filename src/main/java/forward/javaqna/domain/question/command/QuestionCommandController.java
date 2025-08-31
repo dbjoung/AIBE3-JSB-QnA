@@ -63,9 +63,16 @@ public class QuestionCommandController {
      * @param questionId 수정 대상 ID
      * @return 상세페이지로 리다이렉트
      */
-    //TODO: Validation 적용, 질문 등록자만 수정 가능
+    //TODO: 질문 등록자만 수정 가능
     @PostMapping("/modify/{id}")
-    public String editQuestion(@PathVariable("id") Integer questionId, @ModelAttribute QuestionModifyDto questionEditDto) {
+    public String editQuestion(@PathVariable("id") Integer questionId,
+                               @Valid @ModelAttribute QuestionModifyDto questionEditDto,
+                               BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "question/write";
+        }
+
         questionCommandService.modify(questionEditDto);
 
         return "redirect:/question/find/" + questionId;
