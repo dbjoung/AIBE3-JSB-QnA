@@ -66,7 +66,7 @@ public class QuestionCommandController {
     //TODO: 질문 등록자만 수정 가능
     @PostMapping("/modify/{id}")
     public String editQuestion(@PathVariable("id") Integer questionId,
-                               @Valid @ModelAttribute QuestionModifyDto questionEditDto,
+                               @Valid @ModelAttribute("question") QuestionModifyDto questionEditDto,
                                BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
