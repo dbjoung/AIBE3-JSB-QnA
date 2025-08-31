@@ -3,6 +3,7 @@ package forward.javaqna.domain.answer.command;
 import forward.javaqna.domain.answer.command.dto.AnswerRequestDto;
 import forward.javaqna.domain.answer.core.Answer;
 import forward.javaqna.domain.answer.core.AnswerRepository;
+import forward.javaqna.domain.answer.core.policy.AnswerPolicy;
 import forward.javaqna.domain.member.core.Member;
 import forward.javaqna.domain.member.core.MemberRepository;
 import forward.javaqna.domain.question.core.Question;
@@ -34,7 +35,7 @@ public class AnswerCommandService {
     public void modifyAnswer(String username, Integer answerId, AnswerRequestDto answerRequestDto) {
         Member member = getMember(username);
         Answer answer = getAnswer(answerId);
-        validAnswerHasMember(answer, member);
+        AnswerPolicy.checkAuthor(answer, member);
 
         String newContent = answerRequestDto.getContent();
         answer.edit(newContent);
@@ -43,7 +44,7 @@ public class AnswerCommandService {
     public void deleteAnswer(String username, Integer answerId) {
         Member member = getMember(username);
         Answer answer = getAnswer(answerId);
-        validAnswerHasMember(answer, member);
+        AnswerPolicy.checkAuthor(answer, member);
 
         answerRepository.delete(answer);
     }
@@ -61,9 +62,5 @@ public class AnswerCommandService {
     private Answer getAnswer(Integer answerId) {
         return answerRepository.findById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("답변이 존재하지 않습니다."));
-    }
-
-    private static void validAnswerHasMember(Answer answer, Member member) {
-        if (answer.getMember() != member) throw new IllegalStateException("작성자가 아니므로 수정/삭제 할 수 없습니다.");
     }
 }
