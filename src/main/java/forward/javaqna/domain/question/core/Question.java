@@ -54,7 +54,7 @@ public class Question extends BaseEntity {
         this.member = member;
     }
 
-    public void edit(String newTitle, String newContent) {
+    public void modify(String newTitle, String newContent) {
         this.title = newTitle;
         this.content = newContent;
     }
