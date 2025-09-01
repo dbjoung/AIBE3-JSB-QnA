@@ -22,7 +22,7 @@ public class QuestionQueryService {
 
     //질문 목록 페이징 처리
     @Transactional(readOnly = true)
-    @Query("SELECT q FROM Question q JOIN FETCH q.member LEFT JOIN FETCH q.answerList WHERE q.id = :id")
+    @Query("SELECT q FROM Question q JOIN FETCH q.member")
     public Page<QuestionListDTO> getQuestionPaging(Pageable pageable) {
         int page = pageable.getPageNumber() - 1; //페이지 번호
         int size = 5; //페이지 당 질문 갯수
