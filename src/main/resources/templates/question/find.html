@@ -38,18 +38,46 @@
             <span class="block text-sm text-gray-500 mb-2">Answers</span>
 
             <div class="space-y-4">
-                <div th:each="answer : ${question.answerList}"
+                <div th:each="answer, iterStat : ${answerPage.content}"
                      class="p-4 bg-gray-50 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs text-gray-400">#<span th:text="${answer.id}"></span></span>
-                        <!-- null-safe 처리 -->
+                        <span class="text-xs text-gray-400">
+                            #<span th:text="${(answerPage.number * answerPage.size) + iterStat.count}"></span>
+                        </span>
                         <span class="text-sm font-medium text-blue-600"
                               th:text="${answer.member != null ? answer.member.nickname : '익명'}">작성자</span>
                     </div>
-                    <p class="text-gray-700 leading-relaxed" th:text="${answer.content}"></p>
+                    <p class="text-gray-700 leading-relaxed break-words" th:text="${answer.content}"></p>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- 페이징 UI -->
+    <div th:if="${!answerPage.isEmpty()}" class="mt-6 flex justify-center items-center space-x-2">
+        <a th:href="@{|/question/find/${question.id}?page=${answerPage.number - 1}|}"
+           th:classappend="${!answerPage.hasPrevious()} ? 'pointer-events-none text-gray-400' : 'text-blue-600 hover:text-blue-800'"
+           class="px-3 py-1 rounded-lg transition">
+            &laquo; Previous
+        </a>
+
+        <nav aria-label="Page navigation">
+            <ul class="inline-flex items-center -space-x-px">
+                <li th:each="pageNum : ${#numbers.sequence(0, answerPage.totalPages - 1)}"
+                    th:if="${pageNum >= answerPage.number - 2 and pageNum <= answerPage.number + 2}">
+                    <a th:href="@{|/question/find/${question.id}?page=${pageNum}|}"
+                       th:text="${pageNum + 1}"
+                       th:classappend="${pageNum == answerPage.number} ? 'bg-blue-500 text-white font-bold' : 'bg-white text-gray-600 hover:bg-gray-100'"
+                       class="px-4 py-2 border border-gray-300 transition"></a>
+                </li>
+            </ul>
+        </nav>
+
+        <a th:href="@{|/question/find/${question.id}?page=${answerPage.number + 1}|}"
+           th:classappend="${!answerPage.hasNext()} ? 'pointer-events-none text-gray-400' : 'text-blue-600 hover:text-blue-800'"
+           class="px-3 py-1 rounded-lg transition">
+            Next &raquo;
+        </a>
     </div>
 
     <!-- Answer 작성 폼 추가 -->
