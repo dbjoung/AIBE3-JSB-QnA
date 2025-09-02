@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -46,7 +46,7 @@
                     <p class="text-gray-700 leading-relaxed" th:text="${answer.content}"></p>
 
                     <!-- 버튼 영역 -->
-                    <div class="flex gap-2 mt-2">
+                    <div class="flex gap-2 mt-2" sec:authorize="isAuthenticated()" th:if="${#authentication.name == answer.member.username}">
                         <!-- 수정 버튼 -->
                         <button type="button"
                                 th:onclick="'toggleEditForm(\'editForm__' + ${answer.id} + '\')'"
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Answer 작성 폼 추가 -->
-    <div class="mt-6">
+    <div class="mt-6" sec:authorize="isAuthenticated()">
         <span class="block text-sm text-gray-500 mb-2">Write an Answer</span>
 
         <form th:action="@{|/answer/write/${question.id}|}" method="POST" class="space-y-4">
