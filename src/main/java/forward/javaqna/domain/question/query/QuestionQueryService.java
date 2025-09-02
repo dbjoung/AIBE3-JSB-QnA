@@ -22,7 +22,6 @@ public class QuestionQueryService {
 
     //질문 목록 페이징 처리
     @Transactional(readOnly = true)
-    @Query("SELECT q FROM Question q JOIN FETCH q.member")
     public Page<QuestionListDTO> getQuestionPaging(Pageable pageable) {
         int page = pageable.getPageNumber() - 1; //페이지 번호
         int size = 5; //페이지 당 질문 갯수
@@ -36,7 +35,8 @@ public class QuestionQueryService {
     //질문 단건 조회
     @Transactional(readOnly = true)
     public QuestionDTO getQuestionById(int id) {
-        return QuestionDTO.fromQuestion(questionRepository.findById(id).orElseThrow());
+        return QuestionDTO.fromQuestion(questionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Question not found")));
     }
 
 }
