@@ -118,5 +118,11 @@
         </a>
     </div>
 </div>
+
+<!-- alert 스크립트 -->
+<script th:if="${errorMsg != null}">
+    alert('[[${#strings.escapeJavaScript(errorMsg)}]]');
+</script>
+
 </body>
 </html>

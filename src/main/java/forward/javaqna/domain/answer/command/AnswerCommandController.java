@@ -29,6 +29,12 @@ public class AnswerCommandController {
                               BindingResult bindingResult,
                               RedirectAttributes redirectAttributes) {
 
+        if (bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getAllErrors().getFirst().getDefaultMessage();
+            redirectAttributes.addFlashAttribute("errorMsg", errorMsg);
+            return "redirect:/question/find/" + questionId;
+        }
+
         answerCommandService.createAnswer(principal.getName(), questionId, answerRequestDto);
 
         return "redirect:/question/find/" + questionId;
@@ -41,6 +47,12 @@ public class AnswerCommandController {
                                @Valid @ModelAttribute("answer") AnswerRequestDto answerRequestDto,
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getAllErrors().getFirst().getDefaultMessage();
+            redirectAttributes.addFlashAttribute("errorMsg", errorMsg);
+            return "redirect:/question/find/" + questionId;
+        }
 
         answerCommandService.modifyAnswer(principal.getName(), answerId, answerRequestDto);
 
