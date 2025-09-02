@@ -16,24 +16,38 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                    .anyRequest().permitAll()
-            );
+                // 요청별 권한 설정
+                .authorizeHttpRequests((
+                                auth -> auth
+                                        .requestMatchers("/**").permitAll()
+                        )
+                )
+                .csrf(csrf -> csrf
+                        // H2 콘솔 접근 시 CSRF 예외 처리
+                        .ignoringRequestMatchers("/h2-console/**")
+                )
+                .headers(headers -> headers
+                        // H2 콘솔은 frame 사용 → sameOrigin 허용
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
+                .formLogin(
+                        form -> form
+                                .loginPage("/user/auth/login")
+                                .defaultSuccessUrl("/user/auth/login", true)
+                )
+                .logout(
+                        logout -> logout
+                                .logoutUrl("/user/auth/logout")
+                                .logoutSuccessUrl("/user/auth/login")
+                );
         return http.build();
     }
 
+
     @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() {
-        return web -> web.ignoring()
-                .requestMatchers(PathRequest.toH2Console());
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
