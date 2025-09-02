@@ -36,7 +36,7 @@ public class QuestionCommandService {
         String newContent = questionEditDto.content();
 
         Question question = questionRepository.getQuestionById(id);
-        question.edit(newTitle, newContent);
+        question.modify(newTitle, newContent);
     }
 
     @Transactional
