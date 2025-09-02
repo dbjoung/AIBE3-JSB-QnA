@@ -27,7 +27,7 @@ public class QuestionQueryService {
         int size = 5; //페이지 당 질문 갯수
 
         //내림차순 정렬(최신 글 먼저 불러오기)
-        Page<Question> questionPage = questionRepository.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
+        Page<Question> questionPage = questionRepository.findAllWithMember(PageRequest.of(page, size, Sort.by("id").descending()));
 
         return questionPage.map(QuestionListDTO::fromEntity);
     }
@@ -35,7 +35,7 @@ public class QuestionQueryService {
     //질문 단건 조회
     @Transactional(readOnly = true)
     public QuestionDTO getQuestionById(int id) {
-        return QuestionDTO.fromQuestion(questionRepository.findById(id)
+        return QuestionDTO.fromQuestion(questionRepository.findWithMemberAndAnswers(id)
                 .orElseThrow(() -> new IllegalArgumentException("Question not found")));
     }
 

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -12,8 +13,10 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     // EntityGraph를 사용해서 member 정보를 같이 가져오기
     // Page를 사용하고 있어 fetch join과 함께 사용시 오류 발생 위험
     @EntityGraph(attributePaths = {"member"})
-    Page<Question> findAll(Pageable pageable);
+    @Query("SELECT q from Question q")
+    Page<Question> findAllWithMember(Pageable pageable);
 
     @EntityGraph(attributePaths = {"member", "answerList"})
-    Optional<Question> findById(Integer id);
+    @Query("SELECT q FROM Question q WHERE q.id = :id")
+    Optional<Question> findWithMemberAndAnswers(Integer id);
 }
