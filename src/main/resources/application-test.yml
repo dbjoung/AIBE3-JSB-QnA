@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:db_test;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.transaction: trace
+    org.springframework.test.context.transaction: debug
