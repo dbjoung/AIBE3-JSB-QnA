@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>게시판 서비스</title>
+</head>
+<body>
+    <nav>
+        <a href="/posts/list">게시물 목록</a>
+        <a sec:authorize="isAnonymous()" href="/user/auth/signup">회원가입</a>
+        <a sec:authorize="isAnonymous()"  href="/user/auth/login">로그인</a>
+        <span sec:authorize="isAuthenticated()">안녕하세요, <span sec:authentication="name"></span>님</span>
+        <form sec:authorize="isAuthenticated()" th:action="@{/user/auth/logout}" method="POST" style="display: inline-block;">
+            <button type="submit">로그아웃</button>
+        </form>
+    </nav>
+    <!-- Principal 객체를 이용한 정보 출력 -->
+    <ul sec:authorize="isAuthenticated()">
+        <li sec:authentication="principal"></li>
+        <li sec:authentication="principal.username"></li>
+        <li sec:authentication="principal.authorities"></li>
+    </ul>
+
+    <!-- 컨텐츠 영역 -->
+    <th:block layout:fragment="content"></th:block>
+    <!-- 컨텐츠 영역 -->
+</body>
+</html>
