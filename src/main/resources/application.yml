@@ -1,4 +1,6 @@
 spring:
+  messages:
+    basename: messages, errors
   application:
     name: java-qna
   profiles:

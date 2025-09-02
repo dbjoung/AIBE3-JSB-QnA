@@ -4,9 +4,7 @@ import forward.javaqna.domain.member.core.Member;
 import forward.javaqna.domain.question.core.Question;
 import forward.javaqna.global.jpa.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -14,6 +12,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -30,4 +30,8 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void edit(String newContent) {
+        this.content = newContent;
+    }
 }
