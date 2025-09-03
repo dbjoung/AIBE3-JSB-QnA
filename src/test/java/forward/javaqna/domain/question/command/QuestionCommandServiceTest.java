@@ -28,9 +28,12 @@ class QuestionCommandServiceTest {
     @Autowired MemberRepository memberRepository;
     @Autowired EntityManager em;
 
+    Member member;
+
     @BeforeEach
     void setUp() {
-        memberRepository.save(new Member("username", "password", "nickname"));
+        this.member = new Member("username", "password", "nickname");
+        memberRepository.save(member);
     }
 
     @Test
@@ -58,7 +61,7 @@ class QuestionCommandServiceTest {
     @DisplayName("해당 ID로 질문 수정 뷰에 보여줄 DTO를 반환한다.")
     void findByIdForModify() {
         //given
-        Question savedQuestion = questionRepository.save(new Question("title", "content", null));
+        Question savedQuestion = questionRepository.save(new Question("title", "content", member));
         int questionId = savedQuestion.getId();
 
         //when
@@ -75,11 +78,11 @@ class QuestionCommandServiceTest {
     @DisplayName("질문 수정 DTO를 넘겨 기존의 질문 엔티티를 수정한다.")
     void modify() {
         //given
-        Question savedQuestion = questionRepository.save(new Question("title", "content", null));
+        Question savedQuestion = questionRepository.save(new Question("title", "content", member));
         QuestionModifyDto modifyDto = new QuestionModifyDto(savedQuestion.getId(), "new title", "new content");
 
         //when
-        questionCommandService.modify(modifyDto);
+        questionCommandService.modify(modifyDto, "username");
         em.flush();
         em.clear();
 
@@ -94,20 +97,16 @@ class QuestionCommandServiceTest {
     @DisplayName("질문 삭제 시 관련된 답변들도 삭제된다.")
     void delete() {
         //given
-        Question savedQuestion = questionRepository.save(new Question("title", "content", null));
+        Question savedQuestion = questionRepository.save(new Question("title", "content", member));
 
-        Answer a1 = new Answer();
-        a1.setQuestion(savedQuestion);
-        a1.setContent("answer1");
+        Answer a1 = savedQuestion.addAnswer("answer 1", member);
         em.persist(a1);
 
-        Answer a2 = new Answer();
-        a2.setQuestion(savedQuestion);
-        a2.setContent("answer1");
+        Answer a2 = savedQuestion.addAnswer("answer 2", member);
         em.persist(a2);
 
         //when
-        questionCommandService.delete(savedQuestion.getId());
+        questionCommandService.delete(savedQuestion.getId(), "username");
         em.flush();
         em.clear();
 
