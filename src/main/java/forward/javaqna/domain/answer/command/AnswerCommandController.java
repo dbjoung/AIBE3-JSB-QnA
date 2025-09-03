@@ -1,12 +1,15 @@
 package forward.javaqna.domain.answer.command;
 
 import forward.javaqna.domain.answer.command.dto.AnswerRequestDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -17,19 +20,50 @@ public class AnswerCommandController {
 
     private final AnswerCommandService answerCommandService;
 
-    @PostMapping("/create/{id}")
-    public String createAnswer(@PathVariable("id") Integer questionId,
-                               @RequestParam(name="content") String content,
-                               Principal principal) {
+    @PostMapping("/write/{questionId}")
+    public String writeAnswer(Principal principal,
+                              @PathVariable("questionId") Integer questionId,
+                              @Valid @ModelAttribute("answer") AnswerRequestDto answerRequestDto,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes) {
 
-        AnswerRequestDto answerRequestDto = new AnswerRequestDto(content);
+        if (bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getAllErrors().getFirst().getDefaultMessage();
+            redirectAttributes.addFlashAttribute("errorMsg", errorMsg);
+            return "redirect:/question/find/" + questionId;
+        }
 
-        answerCommandService.createAnswer(
-                principal.getName(),
-                questionId,
-                answerRequestDto
-        );
+        answerCommandService.createAnswer(principal.getName(), questionId, answerRequestDto);
 
-        return String.format("redirect:/question/find/%d", questionId);
+        return "redirect:/question/find/" + questionId;
+    }
+
+    @PostMapping("/modify/{questionId}/{answerId}")
+    public String modifyAnswer(Principal principal,
+                               @PathVariable("questionId") Integer questionId,
+                               @PathVariable("answerId") Integer answerId,
+                               @Valid @ModelAttribute("answer") AnswerRequestDto answerRequestDto,
+                               BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getAllErrors().getFirst().getDefaultMessage();
+            redirectAttributes.addFlashAttribute("errorMsg", errorMsg);
+            return "redirect:/question/find/" + questionId;
+        }
+
+        answerCommandService.modifyAnswer(principal.getName(), answerId, answerRequestDto);
+
+        return "redirect:/question/find/" + questionId;
+    }
+
+    @PostMapping("/delete/{questionId}/{answerId}")
+    public String deleteAnswer(Principal principal,
+                               @PathVariable("questionId") Integer questionId,
+                               @PathVariable("answerId") Integer answerId) {
+
+        answerCommandService.deleteAnswer(principal.getName(), answerId);
+
+        return "redirect:/question/find/" + questionId;
     }
 }
