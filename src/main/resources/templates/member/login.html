@@ -1,15 +1,17 @@
 <html layout:decorate="~{/common/layout/layout}">
-<form layout:fragment="content" th:action="@{/user/auth/login}" th:object="${loginForm}" method="POST">
-    <!-- <div th:replace="~{/common/fragment/errors :: errorsFragment}"></div> -->
-    <div th:if="${param.error}" style="color: red;">                                              │
-        <p>아이디 또는 비밀번호가 올바르지 않습니다.</p>                                          │
-    </div>
-    <label for="username">아이디</label>
-    <input type="text" th:field="*{username}">
-    <br>
-    <label for="password">패스워드</label>
-    <input type="password" th:field="*{password}">
-    <br>
-    <input type="submit" />
-</form>
-</html>
+<div sec:authorize="isAnonymous()" layout:fragment="content">
+    <form th:action="@{/user/auth/login}" th:object="${loginForm}" method="POST">
+        <!-- <div th:replace="~{/common/fragment/errors :: errorsFragment}"></div> -->
+        <div th:if="${param.error}" style="color: red;">                                              │
+            <p>아이디 또는 비밀번호가 올바르지 않습니다.</p>                                          │
+        </div>
+        <label for="username">아이디</label>
+        <input type="text" th:field="*{username}">
+        <br>
+        <label for="password">패스워드</label>
+        <input type="password" th:field="*{password}">
+        <br>
+        <input type="submit" />
+    </form>
+</div>
+<span sec:authentication="principal.username"></span>님 로그인 성공

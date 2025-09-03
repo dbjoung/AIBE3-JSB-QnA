@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,9 +7,25 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
 <div class="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-8 space-y-6">
-    <h1 class="text-2xl font-bold text-gray-800 border-b pb-4">
-        Question Detail
-    </h1>
+    <div class="flex items-center justify-between border-b pb-4">
+        <h1 class="text-2xl font-bold text-gray-800">
+            Question Detail
+        </h1>
+
+        <div class="flex space-x-2" th:if="${#authentication.name == question.member.username}">
+            <a th:href="@{'/question/modify/' + ${question.id}}"
+               class="px-3 py-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded-lg text-sm transition">
+                수정
+            </a>
+            <form th:action="@{'/question/delete/' + ${question.id}}" method="post"
+                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <button type="submit"
+                        class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition">
+                    삭제
+                </button>
+            </form>
+        </div>
+    </div>
 
     <div class="space-y-4">
         <div>
@@ -36,23 +52,66 @@
 
             <div class="space-y-4">
                 <div th:each="answer : ${question.answerList}"
-                     class="p-4 bg-gray-50 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition">
+                     class="p-4 bg-gray-50 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition mb-4">
+
+                    <!-- 기존 답변 표시 영역 -->
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-xs text-gray-400">#<span th:text="${answer.id}"></span></span>
-                        <span class="text-sm font-medium text-blue-600"
-                              th:text="${answer.member.nickname}">작성자</span>
+                        <span class="text-sm font-medium text-blue-600" th:text="${answer.member.nickname}">작성자</span>
                     </div>
                     <p class="text-gray-700 leading-relaxed" th:text="${answer.content}"></p>
+
+                    <!-- 버튼 영역 -->
+                    <div class="flex gap-2 mt-2" sec:authorize="isAuthenticated()" th:if="${#authentication.name == answer.member.username}">
+                        <!-- 수정 버튼 -->
+                        <button type="button"
+                                th:onclick="'toggleEditForm(\'editForm__' + ${answer.id} + '\')'"
+                                class="text-sm text-yellow-600 hover:underline">
+                            수정
+                        </button>
+
+                        <!-- 삭제 폼 -->
+                        <form th:action="@{|/answer/delete/${question.id}/${answer.id}|}" method="post"
+                              th:object="${answer}" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                            <button type="submit" class="text-sm text-red-600 hover:underline">삭제</button>
+                        </form>
+                    </div>
+
+                    <!-- 수정 폼 -->
+                    <form th:id="'editForm__' + ${answer.id}" th:action="@{|/answer/modify/${question.id}/${answer.id}|}"
+                          method="post" class="mt-2 hidden">
+                        <textarea name="content" class="w-full p-2 border rounded" th:text="${answer.content}"></textarea>
+                        <div class="flex justify-end gap-2 mt-1">
+                            <button type="submit" class="text-sm text-white bg-blue-500 px-3 py-1 rounded hover:bg-blue-600">
+                                저장
+                            </button>
+                            <button type="button" class="text-sm text-gray-600 px-3 py-1 rounded border hover:bg-gray-100"
+                                    th:onclick="'toggleEditForm(\'editForm__' + ${answer.id} + '\')'">
+                                취소
+                            </button>
+                        </div>
+                    </form>
                 </div>
+
+                <script>
+                    function toggleEditForm(formId) {
+                        const form = document.getElementById(formId);
+                        if (form.classList.contains('hidden')) {
+                            form.classList.remove('hidden');
+                        } else {
+                            form.classList.add('hidden');
+                        }
+                    }
+                </script>
             </div>
         </div>
     </div>
 
     <!-- Answer 작성 폼 추가 -->
-    <div class="mt-6">
+    <div class="mt-6" sec:authorize="isAuthenticated()">
         <span class="block text-sm text-gray-500 mb-2">Write an Answer</span>
 
-        <form action="#" method="get" class="space-y-4">
+        <form th:action="@{|/answer/write/${question.id}|}" method="POST" class="space-y-4">
             <div>
             <textarea name="content" rows="4" required
                       class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
@@ -75,5 +134,11 @@
         </a>
     </div>
 </div>
+
+<!-- alert 스크립트 -->
+<script th:if="${errorMsg != null}">
+    alert('[[${#strings.escapeJavaScript(errorMsg)}]]');
+</script>
+
 </body>
 </html>

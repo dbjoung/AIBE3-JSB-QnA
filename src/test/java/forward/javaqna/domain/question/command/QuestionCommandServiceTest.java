@@ -1,11 +1,14 @@
 package forward.javaqna.domain.question.command;
 
 import forward.javaqna.domain.answer.core.Answer;
+import forward.javaqna.domain.member.core.Member;
+import forward.javaqna.domain.member.core.MemberRepository;
 import forward.javaqna.domain.question.command.dto.QuestionModifyDto;
 import forward.javaqna.domain.question.command.dto.QuestionWriteDto;
 import forward.javaqna.domain.question.core.Question;
 import forward.javaqna.domain.question.core.QuestionRepository;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +25,16 @@ class QuestionCommandServiceTest {
 
     @Autowired QuestionCommandService questionCommandService;
     @Autowired QuestionRepository questionRepository;
+    @Autowired MemberRepository memberRepository;
     @Autowired EntityManager em;
+
+    Member member;
+
+    @BeforeEach
+    void setUp() {
+        this.member = new Member("username", "password", "nickname");
+        memberRepository.save(member);
+    }
 
     @Test
     @DisplayName("질문 등록 DTO를 전달하면 질문 엔티티가 저장된다.")
@@ -31,7 +43,7 @@ class QuestionCommandServiceTest {
         QuestionWriteDto writeDto = new QuestionWriteDto("test title", "test content");
 
         //when
-        Integer savedId = questionCommandService.writeQuestion(writeDto);
+        Integer savedId = questionCommandService.writeQuestion(writeDto, "username");
         em.flush();
         em.clear();
 
@@ -41,13 +53,15 @@ class QuestionCommandServiceTest {
         assertThat(question).isNotNull();
         assertThat(question.getTitle()).isEqualTo(writeDto.title());
         assertThat(question.getContent()).isEqualTo(writeDto.content());
+        assertThat(question.getMember()).isNotNull();
+        assertThat(question.getMember().getUsername()).isEqualTo("username");
     }
 
     @Test
     @DisplayName("해당 ID로 질문 수정 뷰에 보여줄 DTO를 반환한다.")
     void findByIdForModify() {
         //given
-        Question savedQuestion = questionRepository.save(new Question("title", "content", null));
+        Question savedQuestion = questionRepository.save(new Question("title", "content", member));
         int questionId = savedQuestion.getId();
 
         //when
@@ -64,11 +78,11 @@ class QuestionCommandServiceTest {
     @DisplayName("질문 수정 DTO를 넘겨 기존의 질문 엔티티를 수정한다.")
     void modify() {
         //given
-        Question savedQuestion = questionRepository.save(new Question("title", "content", null));
+        Question savedQuestion = questionRepository.save(new Question("title", "content", member));
         QuestionModifyDto modifyDto = new QuestionModifyDto(savedQuestion.getId(), "new title", "new content");
 
         //when
-        questionCommandService.modify(modifyDto);
+        questionCommandService.modify(modifyDto, "username");
         em.flush();
         em.clear();
 
@@ -83,20 +97,16 @@ class QuestionCommandServiceTest {
     @DisplayName("질문 삭제 시 관련된 답변들도 삭제된다.")
     void delete() {
         //given
-        Question savedQuestion = questionRepository.save(new Question("title", "content", null));
+        Question savedQuestion = questionRepository.save(new Question("title", "content", member));
 
-        Answer a1 = new Answer();
-        a1.setQuestion(savedQuestion);
-        a1.setContent("answer1");
+        Answer a1 = savedQuestion.addAnswer("answer 1", member);
         em.persist(a1);
 
-        Answer a2 = new Answer();
-        a2.setQuestion(savedQuestion);
-        a2.setContent("answer1");
+        Answer a2 = savedQuestion.addAnswer("answer 2", member);
         em.persist(a2);
 
         //when
-        questionCommandService.delete(savedQuestion.getId());
+        questionCommandService.delete(savedQuestion.getId(), "username");
         em.flush();
         em.clear();
 

@@ -1,13 +1,12 @@
 package forward.javaqna.domain.question.core;
 
-import forward.javaqna.domain.question.query.DTO.QuestionListDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
-import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -26,4 +25,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
         return findById(questionId).orElseThrow(() -> new EntityNotFoundException("Cannot found question for: " + questionId));
     }
 
+    @Query("SELECT q FROM Question q JOIN FETCH q.member WHERE q.id = :id")
+    Optional<Question> findByIdWithMember(@Param("id") Integer id);
 }

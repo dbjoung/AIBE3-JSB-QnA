@@ -1,15 +1,10 @@
 package forward.javaqna;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -19,12 +14,13 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // 요청별 권한 설정
-                .authorizeHttpRequests((
-                                auth -> auth
-                                        .requestMatchers("/**").permitAll()
-                        )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/question/write", "/question/modify/**", "/question/delete/**").authenticated()
+                        .anyRequest().permitAll()
+
                 )
                 .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/user/auth/signup")
                         // H2 콘솔 접근 시 CSRF 예외 처리
                         .ignoringRequestMatchers("/h2-console/**")
                 )
