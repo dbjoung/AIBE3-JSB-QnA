@@ -1,5 +1,8 @@
 package forward.javaqna.domain.question.query;
 
+import forward.javaqna.domain.answer.query.AnswerQueryService;
+import forward.javaqna.domain.question.query.DTO.AnswerDTO;
+import forward.javaqna.domain.question.query.DTO.QuestionDTO;
 import forward.javaqna.domain.question.query.DTO.QuestionListDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,12 +13,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/question")
 public class QuestionQueryController {
     private final QuestionQueryService questionQueryService;
+    private final AnswerQueryService answerQueryService;
 
     //Question 목록 불러오기
     @GetMapping("/list") //기본 페이지 '1'페이지로 지정
@@ -33,8 +38,15 @@ public class QuestionQueryController {
 
     //Question 상세보기 불러오기
     @GetMapping("/find/{id}")
-    public String getQuestionDetail(Model model, @PathVariable("id") int id) {
-        model.addAttribute("question", questionQueryService.getQuestionById(id));
-        return  "question/find";
+    public String getQuestionDetail(Model model, @PathVariable("id") int id,
+                                    @RequestParam(value = "page", defaultValue = "0") int page) {
+
+        QuestionDTO question = questionQueryService.getQuestionById(id);
+        Page<AnswerDTO> answerPage = answerQueryService.getPage(id, page);
+
+        model.addAttribute("question", question);
+        model.addAttribute("answerPage", answerPage);
+
+        return "question/find";
     }
 }
