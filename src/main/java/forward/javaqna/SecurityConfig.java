@@ -14,11 +14,10 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // 요청별 권한 설정
-                .authorizeHttpRequests((
-                                auth -> auth
-                                        .requestMatchers("/question/write").authenticated()
-                                        .requestMatchers("/**").permitAll()
-                        )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/question/write", "/question/modify/**", "/question/delete/**").authenticated()
+                        .anyRequest().permitAll()
+
                 )
                 .csrf(csrf -> csrf
                         // H2 콘솔 접근 시 CSRF 예외 처리

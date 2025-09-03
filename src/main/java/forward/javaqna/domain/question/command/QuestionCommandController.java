@@ -66,17 +66,16 @@ public class QuestionCommandController {
      * @param questionId 수정 대상 ID
      * @return 상세페이지로 리다이렉트
      */
-    //TODO: 질문 등록자만 수정 가능
     @PostMapping("/modify/{id}")
     public String editQuestion(@PathVariable("id") Integer questionId,
                                @Valid @ModelAttribute("question") QuestionModifyDto questionEditDto,
-                               BindingResult bindingResult) {
-
+                               BindingResult bindingResult,
+                               Principal principal) {
         if (bindingResult.hasErrors()) {
             return "question/write";
         }
 
-        questionCommandService.modify(questionEditDto);
+        questionCommandService.modify(questionEditDto, principal.getName());
 
         return "redirect:/question/find/" + questionId;
     }
@@ -86,10 +85,10 @@ public class QuestionCommandController {
      * @param questionId 삭제 대상 ID
      * @return 질문 리스트 페이지로 리다이렉트
      */
-    //TODO: 질문 등록자만 삭제 가능
     @PostMapping("/delete/{id}")
-    public String deleteQuestion(@PathVariable("id") Integer questionId) {
-        questionCommandService.delete(questionId);
+    public String deleteQuestion(@PathVariable("id") Integer questionId,
+                                 Principal principal) {
+        questionCommandService.delete(questionId, principal.getName());
 
         return "redirect:/question/list";
     }
