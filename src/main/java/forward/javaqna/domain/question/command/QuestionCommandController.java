@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/question")
@@ -33,14 +35,15 @@ public class QuestionCommandController {
      * 질문 등록 POST 처리
      * @return 상세페이지로 리다이렉트
      */
-    //TODO: 로그인된 사용자만 등록 가능
     @PostMapping("/write")
     public String writeQuestion(@Valid @ModelAttribute("question") QuestionWriteDto questionWriteDto,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult,
+                                Principal principal) {
         if (bindingResult.hasErrors()) {
             return "question/write";
         }
-        Integer id = questionCommandService.writeQuestion(questionWriteDto);
+
+        Integer id = questionCommandService.writeQuestion(questionWriteDto, principal.getName());
 
         return "redirect:/question/find/" + id;
     }
