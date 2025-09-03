@@ -27,4 +27,11 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
     @Query("SELECT q FROM Question q JOIN FETCH q.member WHERE q.id = :id")
     Optional<Question> findByIdWithMember(@Param("id") Integer id);
+
+    @EntityGraph(attributePaths = {"member"})
+    Page<Question> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+    @EntityGraph(attributePaths = {"member"})
+    Page<Question> findByContentContainingIgnoreCase(String content, Pageable pageable);
+    @EntityGraph(attributePaths = {"member"})
+    Page<Question> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String title, String content, Pageable pageable);
 }
