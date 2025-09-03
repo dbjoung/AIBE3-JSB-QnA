@@ -20,7 +20,6 @@ public class SecurityConfig {
 
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/user/auth/signup")
                         // H2 콘솔 접근 시 CSRF 예외 처리
                         .ignoringRequestMatchers("/h2-console/**")
                 )
@@ -31,7 +30,7 @@ public class SecurityConfig {
                 .formLogin(
                         form -> form
                                 .loginPage("/user/auth/login")
-                                .defaultSuccessUrl("/user/auth/login", true)
+                                .defaultSuccessUrl("/question/list", true)
                 )
                 .logout(
                         logout -> logout
