@@ -1,11 +1,14 @@
 package forward.javaqna.domain.question.command;
 
 import forward.javaqna.domain.answer.core.Answer;
+import forward.javaqna.domain.member.core.Member;
+import forward.javaqna.domain.member.core.MemberRepository;
 import forward.javaqna.domain.question.command.dto.QuestionModifyDto;
 import forward.javaqna.domain.question.command.dto.QuestionWriteDto;
 import forward.javaqna.domain.question.core.Question;
 import forward.javaqna.domain.question.core.QuestionRepository;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +25,13 @@ class QuestionCommandServiceTest {
 
     @Autowired QuestionCommandService questionCommandService;
     @Autowired QuestionRepository questionRepository;
+    @Autowired MemberRepository memberRepository;
     @Autowired EntityManager em;
+
+    @BeforeEach
+    void setUp() {
+        memberRepository.save(new Member("username", "password", "nickname"));
+    }
 
     @Test
     @DisplayName("질문 등록 DTO를 전달하면 질문 엔티티가 저장된다.")
@@ -31,7 +40,7 @@ class QuestionCommandServiceTest {
         QuestionWriteDto writeDto = new QuestionWriteDto("test title", "test content");
 
         //when
-        Integer savedId = questionCommandService.writeQuestion(writeDto);
+        Integer savedId = questionCommandService.writeQuestion(writeDto, "username");
         em.flush();
         em.clear();
 
@@ -41,6 +50,8 @@ class QuestionCommandServiceTest {
         assertThat(question).isNotNull();
         assertThat(question.getTitle()).isEqualTo(writeDto.title());
         assertThat(question.getContent()).isEqualTo(writeDto.content());
+        assertThat(question.getMember()).isNotNull();
+        assertThat(question.getMember().getUsername()).isEqualTo("username");
     }
 
     @Test
