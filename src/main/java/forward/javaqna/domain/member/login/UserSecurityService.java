@@ -1,8 +1,8 @@
-package forward.javaqna;
+package forward.javaqna.domain.member.login;
 
 
 import forward.javaqna.domain.member.core.Member;
-import forward.javaqna.domain.member.login.MemberLoginRepository;
+import forward.javaqna.domain.member.core.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,7 +16,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 @Service
 public class UserSecurityService implements UserDetailsService {
-    private final MemberLoginRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
