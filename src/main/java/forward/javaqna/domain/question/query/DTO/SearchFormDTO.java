@@ -1,4 +1,4 @@
-package forward.javaqna.domain.question.search.dto;
+package forward.javaqna.domain.question.query.DTO;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +19,8 @@ public class SearchFormDTO {
     }
     public boolean iskeywordNull() {
         return keyword == null;
+    }
+    public boolean isBothNull() {
+        return iskwTypeNull() && iskeywordNull();
     }
 }
