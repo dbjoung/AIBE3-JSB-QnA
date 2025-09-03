@@ -2,29 +2,26 @@ package forward.javaqna.domain.question.search;
 
 import forward.javaqna.domain.question.core.Question;
 import forward.javaqna.domain.question.core.QuestionRepository;
-import jakarta.validation.constraints.NotBlank;
+import forward.javaqna.domain.question.search.dto.SearchFormDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class QuestionSearchService {
     private final QuestionRepository questionRepository;
 
+    public Page<Question> searchList(@Valid SearchFormDTO searchFormDTO, Pageable pageable) {
+        String kwType = searchFormDTO.getKwType();
+        String keyword = searchFormDTO.getKeyword();
 
-    public List<Question> questionSearch(@NotBlank String kwType, @NotBlank String keyword) {
-        return switch (kwType) {
-            case "title" -> {
-                //return questionRepository.fin
-            }
-            case "content" -> {
-            }
-            case "all" -> {
-
-            }
-            default -> throw new IllegalArgumentException("올바른 키 타입이 넘어오지 않았습니다.");
-        }
+        return switch(kwType) {
+            case "title"-> questionRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+            case "content"-> questionRepository.findByContentContainingIgnoreCase(keyword, pageable);
+            default -> questionRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword, pageable);
+        };
     }
 }
