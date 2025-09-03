@@ -5,25 +5,40 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>게시판 서비스</title>
+    <title>JSB 게시판 서비스</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen p-6">
-    <nav>
-        <a href="/question/list">게시물 목록</a>
-        <a sec:authorize="isAnonymous()" href="/user/auth/signup">회원가입</a>
-        <a sec:authorize="isAnonymous()"  href="/user/auth/login">로그인</a>
-        <span sec:authorize="isAuthenticated()">안녕하세요, <span sec:authentication="name"></span>님</span>
-        <form sec:authorize="isAuthenticated()" th:action="@{/user/auth/logout}" method="POST" style="display: inline-block;">
-            <button type="submit">로그아웃</button>
-        </form>
-    </nav>
-    <!-- Principal 객체를 이용한 정보 출력 -->
-    <ul sec:authorize="isAuthenticated()">
-        <li sec:authentication="principal.username">님 로그인 성공</li>
-    </ul>
+<nav class="max-w-6xl mx-auto mb-4 flex items-center gap-2 sm:gap-3 p-3 bg-white/80 backdrop-blur rounded-xl border border-gray-200 shadow-sm">
+    <a href="/question/list"
+       class="text-sm sm:text-base text-gray-800 hover:text-gray-900 font-medium px-3 py-1.5 rounded-lg hover:bg-gray-100">
+        게시물 목록
+    </a>
 
-    <!-- 컨텐츠 영역 -->
-    <th:block layout:fragment="content"></th:block>
-    <!-- 컨텐츠 영역 -->
+    <a sec:authorize="isAnonymous()" href="/user/auth/signup"
+       class="ml-auto text-sm text-gray-700 hover:text-gray-900 px-3 py-1.5 rounded-lg hover:bg-gray-100">
+        회원가입
+    </a>
+    <a sec:authorize="isAnonymous()" href="/user/auth/login"
+       class="text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 shadow-sm">
+        로그인
+    </a>
+
+    <span sec:authorize="isAuthenticated()"
+          class="ml-auto text-sm text-gray-700">
+      안녕하세요, <span sec:authentication="name" class="font-medium"></span>님
+    </span>
+
+    <form sec:authorize="isAuthenticated()" th:action="@{/user/auth/logout}" method="POST" style="display: inline-block;">
+        <button type="submit"
+                class="text-sm text-gray-700 px-3 py-1.5 rounded-lg hover:bg-gray-100 border border-gray-200">
+            로그아웃
+        </button>
+    </form>
+</nav>
+
+<!-- 컨텐츠 영역 -->
+<th:block layout:fragment="content"></th:block>
+<!-- 컨텐츠 영역 -->
 </body>
 </html>

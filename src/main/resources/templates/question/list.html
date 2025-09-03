@@ -1,13 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" layout:decorate="~{/common/layout/layout}">
+<html layout:decorate="~{/common/layout/layout}">
 <head>
-    <meta charset="UTF-8">
     <title>Question List</title>
-    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <div layout:fragment="content">
 <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-md p-6">
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Question List</h1>
+
+    <form method="GET" th:object="${form}" class="flex flex-wrap items-center gap-2 sm:gap-3">
+        <select th:field="*{kwType}"
+                class="h-10 px-3 border border-gray-300 rounded-lg bg-white text-gray-700
+                 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="">-- 검색 대상 --</option>
+            <option value="title">제목</option>
+            <option value="content">내용</option>
+        </select>
+
+        <input type="text" th:field="*{keyword}" placeholder="검색어를 입력하세요"
+               class="h-10 w-48 sm:w-64 px-3 border border-gray-300 rounded-lg
+                placeholder:text-gray-400
+                focus:outline-none focus:ring-2 focus:ring-blue-400" />
+
+        <button type="submit"
+                class="h-10 px-4 bg-blue-600 text-white rounded-lg shadow-sm
+                 hover:bg-blue-700 active:translate-y-[1px] transition">
+            검색
+        </button>
+    </form>
+
 
     <ul class="divide-y divide-gray-200">
         <li th:each="question : ${questionList.content}" class="py-4">
@@ -15,8 +35,9 @@
                class="block hover:bg-gray-50 p-4 rounded-lg transition">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">ID:
-                            <span th:text="${question.id}"></span>
+                        <p class="text-sm text-gray-500">
+                            ID: <span th:text="${question.id}"></span> /
+                            writer: <span th:text="${question.member?.nickname ?: 'none'}"></span>
                         </p>
                         <h2 class="text-lg font-semibold text-gray-800" th:text="${question.title}"></h2>
                     </div>
@@ -24,19 +45,26 @@
                 </div>
             </a>
         </li>
+        <li th:if="${#lists.isEmpty(questionList.content)}"
+            class="mt-4 px-4 py-3 text-sm text-gray-600 text-center
+           bg-gray-50 border border-gray-200 rounded-lg">
+            검색 결과가 없습니다.
+        </li>
     </ul>
     <!-- 페이지네이션 -->
-    <div class="flex justify-center items-center space-x-2 mt-8">
+    <div th:if="${!#lists.isEmpty(questionList.content)}" th:object="${form}" class="flex justify-center items-center space-x-2 mt-8">
 
         <!-- 첫번째 페이지 -->
-        <a th:href="@{/question/list(page=1)}"
+        <a th:href="@{/question/list(page=1, kwType=*{kwType}, keyword=*{keyword})}"
            class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100">
             «
         </a>
 
-        <!-- 이전 버튼 -->
-        <a th:href="${questionList.first} ? '#' : @{/question/list(page=${questionList.number})}"
-           class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100">
+        <!-- 이전 버튼 (첫 페이지면 비활성) -->
+        <a th:href="${questionList.first} ? '#'
+                   : @{/question/list(page=${questionList.number}, kwType=*{kwType}, keyword=*{keyword})}"
+           class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100"
+           th:classappend="${questionList.first} ? ' pointer-events-none opacity-40' : ''">
             ‹ Prev
         </a>
 
@@ -47,21 +75,23 @@
               th:text="${page}"
               class="px-3 py-1 rounded-lg border bg-blue-500 text-white"></span>
 
-            <!-- 다른 페이지 -->
+                <!-- 다른 페이지 -->
         <a th:unless="${page == questionList.number + 1}"
-           th:href="@{/question/list(page=${page})}"
+           th:href="@{/question/list(page=${page}, kwType=*{kwType}, keyword=*{keyword})}"
            th:text="${page}"
            class="px-3 py-1 rounded-lg border bg-gray-100 text-gray-700 hover:bg-gray-200"></a>
-    </span>
+        </span>
 
-        <!-- 다음 버튼 -->
-        <a th:href="${questionList.last} ? '#' : @{/question/list(page=${questionList.number + 2})}"
-           class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100">
+        <!-- 다음 버튼 (마지막 페이지면 비활성) -->
+        <a th:href="${questionList.last} ? '#'
+                   : @{/question/list(page=${questionList.number + 2}, kwType=*{kwType}, keyword=*{keyword})}"
+           class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100"
+           th:classappend="${questionList.last} ? ' pointer-events-none opacity-40' : ''">
             Next ›
         </a>
 
         <!-- 마지막 페이지 -->
-        <a th:href="@{/question/list(page=${questionList.totalPages})}"
+        <a th:href="@{/question/list(page=${questionList.totalPages}, kwType=*{kwType}, keyword=*{keyword})}"
            class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-100">
             »
         </a>

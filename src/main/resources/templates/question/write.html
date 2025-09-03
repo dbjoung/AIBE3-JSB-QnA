@@ -1,17 +1,13 @@
+<!DOCTYPE html>
 <html lang="ko"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{/common/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>질문 등록</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- EasyMDE CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <title>게시글 보기</title>
 </head>
-<body class="bg-gray-100 min-h-screen">
 
-<div class="container mx-auto my-6 p-6 bg-white rounded shadow-md">
+<div layout:fragment="content" class="container mx-auto my-6 p-6 bg-white rounded shadow-md">
     <h5 class="text-2xl font-bold mb-6 border-b pb-2"
         th:text="${isModify} ? '질문 수정' : '질문 등록'">질문 등록</h5>
 
@@ -31,7 +27,7 @@
         <div>
             <label class="block text-gray-700 font-medium mb-1">내용</label>
             <textarea th:field="*{content}" id="content" rows="10"
-                      placeholder="마크다운 형식으로 내용을 입력하세요"></textarea>
+                      placeholder="마크다운 형식으로 내용을 입력하세요" class="w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             <div class="text-red-500 text-sm mt-1" th:errors="*{content}"></div>
         </div>
 
@@ -56,6 +52,4 @@
         status: false
     });
 </script>
-
-</body>
 </html>
