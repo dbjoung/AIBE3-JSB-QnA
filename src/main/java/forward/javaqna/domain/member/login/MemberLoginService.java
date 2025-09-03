@@ -4,13 +4,12 @@ import forward.javaqna.domain.member.core.Member;
 import forward.javaqna.domain.member.core.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class MemberLoginService {
-    private final MemberLoginRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     public Member findByUsername(String username) {
         return memberRepository.findByUsername(username)
