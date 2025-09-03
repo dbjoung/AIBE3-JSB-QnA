@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -23,6 +24,9 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     default Question getQuestionById(Integer questionId) {
         return findById(questionId).orElseThrow(() -> new EntityNotFoundException("Cannot found question for: " + questionId));
     }
+
+    @Query("SELECT q FROM Question q JOIN FETCH q.member WHERE q.id = :id")
+    Optional<Question> findByIdWithMember(@Param("id") Integer id);
 
     @EntityGraph(attributePaths = {"member"})
     Page<Question> findByTitleContainingIgnoreCase(String title, Pageable pageable);
