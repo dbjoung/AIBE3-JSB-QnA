@@ -33,8 +33,8 @@ public class AnswerCommandService {
     }
 
     public void modifyAnswer(String username, Integer answerId, AnswerRequestDto answerRequestDto) {
-        Member member = getMember(username);
         Answer answer = getAnswer(answerId);
+        Member member = getMember(username);
         AnswerPolicy.checkAuthor(answer, member);
 
         String newContent = answerRequestDto.getContent();
@@ -42,8 +42,8 @@ public class AnswerCommandService {
     }
 
     public void deleteAnswer(String username, Integer answerId) {
-        Member member = getMember(username);
         Answer answer = getAnswer(answerId);
+        Member member = getMember(username);
         AnswerPolicy.checkAuthor(answer, member);
 
         answerRepository.delete(answer);
@@ -60,7 +60,7 @@ public class AnswerCommandService {
     }
 
     private Answer getAnswer(Integer answerId) {
-        return answerRepository.findById(answerId)
+        return answerRepository.findByIdEager(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("답변이 존재하지 않습니다."));
     }
 }
