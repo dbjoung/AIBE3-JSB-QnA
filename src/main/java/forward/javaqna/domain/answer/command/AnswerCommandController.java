@@ -3,7 +3,6 @@ package forward.javaqna.domain.answer.command;
 import forward.javaqna.domain.answer.command.dto.AnswerRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,7 +16,6 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/answer")
 @RequiredArgsConstructor
-@Slf4j
 public class AnswerCommandController {
 
     private final AnswerCommandService answerCommandService;
