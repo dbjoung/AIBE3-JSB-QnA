@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .formLogin(
                         form -> form
                                 .loginPage("/user/auth/login")
-                                .defaultSuccessUrl("/user/auth/login", true)
+                                .defaultSuccessUrl("/question/list", true)
                 )
                 .logout(
                         logout -> logout
