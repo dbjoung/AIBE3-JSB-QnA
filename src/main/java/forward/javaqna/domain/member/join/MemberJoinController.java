@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,10 +32,10 @@ public class MemberJoinController {
     ) {
 
         if (!MemberJoinPolicy.isPasswordMatch(signUpForm.getPassword(), signUpForm.getPasswordConfirm()))
-            bindingResult.addError(new ObjectError("패스워드 불일치", "입력한 비밀번호가 다릅니다."));
+            bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "입력한 비밀번호가 다릅니다.");
 
         if (!bindingResult.hasFieldErrors("username") && memberJoinService.hasSameUsername(signUpForm.getUsername()))
-            bindingResult.addError(new ObjectError("username 중복","이미 있는 사용자 아이디입니다."));
+            bindingResult.rejectValue("username", "error.username.duplicate", "이미 있는 사용자 아이디입니다.");
 
         if (bindingResult.hasErrors()) return "member/signup";
 

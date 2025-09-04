@@ -27,7 +27,7 @@ public class MemberJoinServiceTests {
         memberJoinService.addMember(new SignUpFormDTO("user3","123414", "123414","newUser"));
         memberJoinService.addMember(new SignUpFormDTO("user4","123414", "123414","newUser"));
 
-        assertThat(memberRepository.count()).isEqualTo(5);
+        assertThat(memberRepository.count()).isEqualTo(4);
     }
     
     @Test

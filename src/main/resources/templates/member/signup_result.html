@@ -1,5 +1,9 @@
-<h3>환영합니다.</h3>
-<div th:object="${member}">
-    <p th:text="|안녕하세요 *{nickname}님.|"></p>
-    <p>가입을 환영합니다!</p>
+<!DOCTYPE html>
+<html layout:decorate="~{/common/layout/layout}">
+<div layout:fragment="content">
+<div th:object="${member}" class="mx-auto max-w-md p-6 bg-white rounded-2xl shadow border border-gray-100 space-y-2">
+    <p th:text="|안녕하세요 *{nickname}님.|" class="text-lg font-medium text-gray-900"></p>
+    <p class="text-gray-600">가입을 환영합니다!</p>
 </div>
+</div>
+</html>

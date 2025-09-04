@@ -4,16 +4,14 @@ import forward.javaqna.domain.answer.query.AnswerQueryService;
 import forward.javaqna.domain.question.query.DTO.AnswerDTO;
 import forward.javaqna.domain.question.query.DTO.QuestionDTO;
 import forward.javaqna.domain.question.query.DTO.QuestionListDTO;
+import forward.javaqna.domain.question.query.DTO.SearchFormDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,8 +22,13 @@ public class QuestionQueryController {
 
     //Question 목록 불러오기
     @GetMapping("/list") //기본 페이지 '1'페이지로 지정
-    public String getQuestionList(Model model, @PageableDefault(page = 1) Pageable pageable) {
-        Page<QuestionListDTO> questionListDTOPage = questionQueryService.getQuestionPaging(pageable);
+    public String getQuestionList(
+            @ModelAttribute(name = "form") SearchFormDTO searchFormDTO,
+            Model model,
+            @PageableDefault(page = 1)
+            Pageable pageable) {
+
+        Page<QuestionListDTO> questionListDTOPage = questionQueryService.getQuestionPaging(searchFormDTO, pageable);
 
         int pageLimit = 5; //보여줄 최대 페이지 갯수
         int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / pageLimit))) - 1) * pageLimit + 1;//첫 페이지

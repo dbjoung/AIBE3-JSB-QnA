@@ -4,16 +4,14 @@ import forward.javaqna.domain.question.core.Question;
 import forward.javaqna.domain.question.core.QuestionRepository;
 import forward.javaqna.domain.question.query.DTO.QuestionDTO;
 import forward.javaqna.domain.question.query.DTO.QuestionListDTO;
+import forward.javaqna.domain.question.query.DTO.SearchFormDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,12 +20,27 @@ public class QuestionQueryService {
 
     //질문 목록 페이징 처리
     @Transactional(readOnly = true)
-    public Page<QuestionListDTO> getQuestionPaging(Pageable pageable) {
+    public Page<QuestionListDTO> getQuestionPaging(SearchFormDTO searchFormDTO, Pageable pageable) {
         int page = pageable.getPageNumber() - 1; //페이지 번호
         int size = 5; //페이지 당 질문 갯수
 
+        Pageable remakePageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        Page<Question> questionPage = null;
         //내림차순 정렬(최신 글 먼저 불러오기)
-        Page<Question> questionPage = questionRepository.findAllWithMember(PageRequest.of(page, size, Sort.by("id").descending()));
+        if (searchFormDTO.isBothNull()) questionPage = questionRepository.findAllWithMember(remakePageable);
+        else {
+            if (searchFormDTO.iskwTypeNull()) searchFormDTO.setKwType("");
+            if (searchFormDTO.iskeywordNull()) searchFormDTO.setKeyword("");
+            String kwType = searchFormDTO.getKwType();
+            String keyword = searchFormDTO.getKeyword();
+
+            questionPage = switch(kwType) {
+                case "title"-> questionRepository.findByTitleContainingIgnoreCase(keyword, remakePageable);
+                case "content"-> questionRepository.findByContentContainingIgnoreCase(keyword, remakePageable);
+                default -> questionRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword, remakePageable);
+            };
+        }
 
         return questionPage.map(QuestionListDTO::fromEntity);
     }

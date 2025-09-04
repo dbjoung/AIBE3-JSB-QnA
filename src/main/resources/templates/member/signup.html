@@ -1,24 +1,53 @@
-<html layout:decorate="~{/common/layout/layout}">
-<div layout:fragment="content">
-    <div th:object="${form}">
-        <div th:if="${#fields.hasAnyErrors()}">
-            <p th:each="err : ${#fields.allErrors()}" th:text="${err}"></p>
-        </div>
-        <h1>회원 가입</h1>
-        <form method="POST">
-            <label for="username">아이디</label>
-            <input type="text" th:field="*{username}" />
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/common/layout/layout}">
 
-            <label for="nickname">닉네임</label>
-            <input type="text" th:field="*{nickname}" />
+<div layout:fragment="content" class="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
+    <!-- 바인딩 대상(form) -->
+    <div th:object="${form}" class="space-y-5">
+        <h1 class="text-2xl font-bold text-gray-800">회원 가입</h1>
 
-            <label for="passsword">비밀번호</label>
-            <input type="text" th:field="*{password}" />
+        <!-- 액션 지정 + POST -->
+        <form method="post" class="space-y-4">
+            <!-- CSRF 토큰 -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-            <label for="passwordConfirm">비밀번호 확인</label>
-            <input type="text" th:field="*{passwordConfirm}" />
+            <div>
+                <label for="username" class="block text-sm text-gray-700 mb-1">아이디</label>
+                <input type="text" th:field="*{username}"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                     class="mt-1 text-sm text-red-600"></div>
+            </div>
 
-            <input type="submit" value="회원 가입"/>
+            <div>
+                <label for="nickname" class="block text-sm text-gray-700 mb-1">닉네임</label>
+                <input type="text" th:field="*{nickname}"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+                <div th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"
+                     class="mt-1 text-sm text-red-600"></div>
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm text-gray-700 mb-1">비밀번호</label>
+                <input type="password" th:field="*{password}"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                     class="mt-1 text-sm text-red-600"></div>
+            </div>
+
+            <div>
+                <label for="passwordConfirm" class="block text-sm text-gray-700 mb-1">비밀번호 확인</label>
+                <input type="password" th:field="*{passwordConfirm}"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+                <div th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"
+                     class="mt-1 text-sm text-red-600"></div>
+            </div>
+
+            <input type="submit" value="회원 가입"
+                   class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg shadow-sm cursor-pointer"/>
         </form>
     </div>
 </div>
