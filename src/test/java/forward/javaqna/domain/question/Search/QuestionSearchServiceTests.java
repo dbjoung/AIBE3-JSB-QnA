@@ -1,10 +1,13 @@
 package forward.javaqna.domain.question.Search;
 
+import forward.javaqna.domain.member.join.MemberJoinService;
+import forward.javaqna.domain.member.join.dto.SignUpFormDTO;
 import forward.javaqna.domain.question.command.QuestionCommandService;
 import forward.javaqna.domain.question.command.dto.QuestionWriteDto;
-import forward.javaqna.domain.question.core.Question;
-import forward.javaqna.domain.question.search.QuestionSearchService;
-import forward.javaqna.domain.question.search.dto.SearchFormDTO;
+import forward.javaqna.domain.question.query.DTO.QuestionListDTO;
+import forward.javaqna.domain.question.query.DTO.SearchFormDTO;
+import forward.javaqna.domain.question.query.QuestionQueryService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +28,27 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class QuestionSearchServiceTests {
     @Autowired
     QuestionCommandService  questionCommandService;
+
     @Autowired
-    QuestionSearchService questionSearchService;
+    QuestionQueryService questionQueryService;
+
+    @Autowired
+    MemberJoinService memberJoinService;
+
+    @BeforeEach
+    public void setup() {
+        memberJoinService.addMember(new SignUpFormDTO("asd", "1234", "1234", "asd"));
+        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목1pick", "검색내용1"), "asd");
+        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목2", "검색내용2"), "asd");
+        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목3", "검색내용3pick"), "asd");
+        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목4", "검색내용4"), "asd");
+    }
 
     @Test
     @DisplayName("검색 테스트 - 제목 검색")
     void t1() {
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목1", "검색내용1"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목2", "검색내용2"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목3", "검색내용3"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목4", "검색내용4"));
-
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Question> list = questionSearchService.searchList(new SearchFormDTO("title", "검색"), pageable);
+        Pageable pageable = PageRequest.of(1, 10);
+        Page<QuestionListDTO> list = questionQueryService.getQuestionPaging(new SearchFormDTO("title", "제목"), pageable);
 
         assertThat(list.getContent().size()).isEqualTo(4);
     }
@@ -45,13 +56,8 @@ public class QuestionSearchServiceTests {
     @Test
     @DisplayName("검색 테스트 - 내용 검색")
     void t2() {
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목1", "검색내용1"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목2", "검색내용2"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목3", "검색내용3"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목4", "검색내용4"));
-
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Question> list = questionSearchService.searchList(new SearchFormDTO("content", "내용"), pageable);
+        Pageable pageable = PageRequest.of(1, 10);
+        Page<QuestionListDTO> list = questionQueryService.getQuestionPaging(new SearchFormDTO("content", "내용"), pageable);
 
         assertThat(list.getContent().size()).isEqualTo(4);
     }
@@ -59,13 +65,8 @@ public class QuestionSearchServiceTests {
     @Test
     @DisplayName("검색 테스트 - ALL 검색")
     void t3() {
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목1pick", "검색내용1"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목2", "검색내용2"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목3", "검색내용3pick"));
-        questionCommandService.writeQuestion(new QuestionWriteDto("검색제목4", "검색내용4"));
-
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Question> list = questionSearchService.searchList(new SearchFormDTO("", "pick"), pageable);
+        Pageable pageable = PageRequest.of(1, 10);
+        Page<QuestionListDTO> list = questionQueryService.getQuestionPaging(new SearchFormDTO("", "pick"), pageable);
 
         assertThat(list.getContent().size()).isEqualTo(2);
     }
